@@ -1,31 +1,44 @@
+```html
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>招聘筛选标准 · 可视化工具</title>
+<title>简历自检工具 · 基于真实HR初筛口径</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
-背景:#fafafa;background:#fafafa;color:#222;line-height:1.6}
-.wrap{max-width:900px;margin:0 auto;padding:32px 20px 60px}
-header{text-align:center;margin-bottom:8px}
+background:#fafafa;color:#222;line-height:1.6}
+.wrap{max-width:960px;margin:0 auto;padding:32px 20px 60px}
+header{text-align:center;margin-bottom:6px}
 h1{font-size:26px;font-weight:600;letter-spacing:-.3px}
 .sub{color:#888;font-size:14px;margin-top:6px}
-.quote{text-align:center;color:#bbb;font-size:12px;margin:14px 0 28px;font-style:italic}
-.tabs{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
-.tabs button{padding:9px 22px;border:1px solid #e5e5e5;background:#fff;border-radius:20px;
+.quote{text-align:center;color:#bbb;font-size:12px;margin:14px 0 26px;font-style:italic}
+.tabs{display:flex;gap:8px;justify-content:center;margin-bottom:22px;flex-wrap:wrap}
+.tabs button{padding:9px 20px;border:1px solid #e5e5e5;background:#fff;border-radius:20px;
 cursor:pointer;font-size:14px;color:#666;transition:.2s;font-family:inherit}
 .tabs button:hover{border-color:#ff2442;color:#ff2442}
 .tabs button.on{background:#ff2442;color:#fff;border-color:#ff2442}
 .card{background:#fff;border-radius:14px;padding:24px;margin-bottom:16px;
 box-shadow:0 1px 3px rgba(0,0,0,.04)}
+label{display:block;font-size:13px;color:#555;margin:14px 0 6px;font-weight:500}
+label:first-child{margin-top:0}
+textarea,input[type=text]{width:100%;padding:12px 14px;border:1px solid #e5e5e5;
+border-radius:9px;font-size:14px;font-family:inherit;outline:none;transition:.2s}
+textarea:focus,input[type=text]:focus{border-color:#ff2442}
+#resume{min-height:280px;resize:vertical;line-height:1.7;font-size:13px}
+.hint{font-size:11px;color:#bbb;margin-top:5px}
+.btn{width:100%;padding:14px;background:#ff2442;color:#fff;border:none;border-radius:9px;
+font-size:15px;font-weight:500;cursor:pointer;margin-top:18px;font-family:inherit;transition:.2s}
+.btn:hover{background:#e01f3a}
+.btn.ghost{background:#fff;color:#666;border:1px solid #e5e5e5;margin-top:8px}
+.btn.ghost:hover{border-color:#ff2442;color:#ff2442}
 .search{width:100%;padding:13px 16px;border:1px solid #e5e5e5;border-radius:10px;
-font-size:14px;margin-bottom:18px;font-family:inherit;outline:none;transition:.2s}
+font-size:14px;margin-bottom:18px;font-family:inherit;outline:none}
 .search:focus{border-color:#ff2442}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:22px}
 .stat{padding:14px;border-radius:10px;border-left:3px solid;background:#fcfcfc;cursor:pointer;transition:.2s}
-.stat:hover{background:#f5f5f5;transform:translateY(-1px)}
+.stat:hover{background:#f5f5f5}
 .stat b{display:block;font-size:23px;font-weight:600}
 .stat span{font-size:12px;color:#777}
 .sec{border:1px solid #f0f0f0;border-radius:10px;margin-bottom:9px;overflow:hidden}
@@ -40,24 +53,39 @@ cursor:pointer;background:#fcfcfc;transition:.2s}
 .tags{display:flex;flex-wrap:wrap;gap:6px}
 .tag{padding:4px 11px;background:#fafafa;border:1px solid #eee;border-radius:13px;font-size:12px;color:#555}
 .tag.hit{background:#fff1f3;border-color:#ffccd5;color:#ff2442;font-weight:500}
-label{display:block;font-size:13px;color:#555;margin:14px 0 6px;font-weight:500}
-input[type=text],textarea{width:100%;padding:11px 14px;border:1px solid #e5e5e5;
-border-radius:9px;font-size:14px;font-family:inherit;outline:none;transition:.2s}
-input[type=text]:focus,textarea:focus{border-color:#ff2442}
-textarea{resize:vertical;min-height:70px}
-.hint{font-size:11px;color:#bbb;margin-top:4px}
-.btn{width:100%;padding:13px;background:#ff2442;color:#fff;border:none;border-radius:9px;
-font-size:15px;font-weight:500;cursor:pointer;margin-top:20px;font-family:inherit;transition:.2s}
-.btn:hover{background:#e01f3a}
-.res{margin-top:20px;padding:20px;border-radius:11px;display:none}
-.res.pass{background:#f0f9f4;border:1px solid #c6e9d5}
-.res.fail{background:#fef6f6;border:1px solid #f5d0d0}
-.res h3{font-size:18px;margin-bottom:12px}
-.res.pass h3{color:#0a8043}
-.res.fail h3{color:#c5221f}
-.res ul{list-style:none;font-size:13px}
-.res li{padding:5px 0;color:#444;display:flex;gap:7px}
-.res li b{color:#222;min-width:64px;flex-shrink:0}
+.tag.ok{background:#eafaf1;border-color:#b8e6ce;color:#0a8043;font-weight:500}
+.tag.miss{background:#fff8e6;border-color:#ffe0a3;color:#8a6d0b}
+/* 结果区 */
+.res{display:none;margin-top:24px}
+.verdict{padding:22px;border-radius:12px;margin-bottom:16px}
+.verdict.pass{background:#f0f9f4;border:1px solid #c6e9d5}
+.verdict.mid{background:#fff8e6;border:1px solid #ffe0a3}
+.verdict.fail{background:#fef6f6;border:1px solid #f5d0d0}
+.verdict h2{font-size:21px;margin-bottom:6px}
+.verdict.pass h2{color:#0a8043}
+.verdict.mid h2{color:#8a6d0b}
+.verdict.fail h2{color:#c5221f}
+.verdict p{font-size:13px;color:#555}
+.stage{margin-top:12px;padding:11px 14px;background:rgba(255,255,255,.7);border-radius:8px;
+font-size:13px;color:#444}
+.stage b{color:#c5221f}
+.blk{background:#fff;border:1px solid #eee;border-radius:11px;padding:18px;margin-bottom:12px}
+.blk h3{font-size:15px;margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.dim{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid #f7f7f7;font-size:13px}
+.dim:last-child{border-bottom:none}
+.dim .k{min-width:80px;color:#888;flex-shrink:0}
+.dim .v{flex:1;color:#333}
+.mark{font-weight:600;margin-right:6px}
+.mark.y{color:#0a8043}.mark.n{color:#c5221f}.mark.w{color:#c47f0a}
+.sug{padding:13px 15px;background:#fafafa;border-left:3px solid #ff2442;border-radius:0 8px 8px 0;
+margin-bottom:10px;font-size:13px;line-height:1.75}
+.sug b{color:#222}
+.sug .ex{display:block;margin-top:7px;padding:9px 12px;background:#fff;border:1px solid #eee;
+border-radius:6px;color:#666;font-size:12.5px}
+.sug .ex i{font-style:normal;color:#c5221f;text-decoration:line-through}
+.sug .ex em{font-style:normal;color:#0a8043;font-weight:500}
+.predict{padding:14px 16px;background:#f0f9f4;border:1px dashed #b8e6ce;border-radius:9px;
+font-size:13px;color:#0a8043;margin-top:6px}
 .err{padding:16px;background:#fffbe6;border:1px solid #ffe58f;border-radius:9px;
 font-size:13px;color:#8a6d0b;line-height:1.8}
 .err code{background:#fff;padding:1px 6px;border-radius:4px;font-size:12px}
@@ -68,18 +96,57 @@ footer{text-align:center;color:#ccc;font-size:12px;margin-top:36px;line-height:1
 <body>
 <div class="wrap">
   <header>
-    <h1>招聘筛选标准</h1>
-    <div class="sub">把隐性判断变成可复用、可交接、可审查的规则</div>
+    <h1>简历自检工具</h1>
+    <div class="sub">基于真实 HR 初筛口径 · 不是通用建议，是告诉你会在第几步被刷掉</div>
   </header>
   <div class="quote">「审美是判断力，思考是竞争力」</div>
 
   <div class="tabs">
-    <button id="t1" class="on" onclick="go(1)">📊 标准总览</button>
-    <button id="t2" onclick="go(2)">⚡ 简历自测</button>
+    <button id="t1" class="on" onclick="go(1)">📄 粘贴简历自检</button>
+    <button id="t2" onclick="go(2)">⚡ 快速查档</button>
+    <button id="t3" onclick="go(3)">📊 标准总览</button>
   </div>
 
-  <!-- 标准总览 -->
+  <!-- ===== Tab1 粘贴简历 ===== -->
   <div id="p1">
+    <div class="card">
+      <label>把简历内容粘贴进来（越完整越准）</label>
+      <textarea id="resume" placeholder="从 PDF 或 Word 里全选复制粘贴即可，格式乱没关系。
+
+示例：
+张三　男　1999.08　138xxxx0000
+XX大学　计算机科学与技术　本科　2021.09-2025.06
+
+实习经历
+字节跳动｜产品运营实习生｜2024.06-2024.09
+负责抖音电商商家侧运营，撰写PRD推动3个功能上线，通过埋点分析定位转化断点，完成竞品分析报告2份…"></textarea>
+      <div class="hint">数据只在你的浏览器里处理，不上传、不保存</div>
+      <button class="btn" onclick="scan()">开始自检</button>
+      <button class="btn ghost" onclick="demo()">用示例简历试一下</button>
+      <div class="res" id="res"></div>
+    </div>
+  </div>
+
+  <!-- ===== Tab2 快速查档 ===== -->
+  <div id="p2" style="display:none">
+    <div class="card">
+      <label>本科院校</label>
+      <input type="text" id="bs" placeholder="如：武汉理工大学">
+      <label>最高学历院校（选填）</label>
+      <input type="text" id="ms" placeholder="如：复旦大学">
+      <label>实习公司（多段用逗号或换行分隔）</label>
+      <textarea id="co" style="min-height:70px" placeholder="字节跳动&#10;某某科技有限公司"></textarea>
+      <label>职位名称</label>
+      <input type="text" id="ti" placeholder="如：产品经理实习生">
+      <label>工作描述（选填，但很关键）</label>
+      <textarea id="de" style="min-height:70px" placeholder="撰写PRD、竞品分析、需求评审、埋点数据分析…"></textarea>
+      <button class="btn" onclick="quick()">开始判定</button>
+      <div class="res" id="res2"></div>
+    </div>
+  </div>
+
+  <!-- ===== Tab3 标准总览 ===== -->
+  <div id="p3" style="display:none">
     <div class="card">
       <input class="search" id="q" placeholder="🔍 搜学校、公司、关键词…（如：武汉理工 / 字节 / PRD）" oninput="render()">
       <div class="grid" id="stats"></div>
@@ -87,40 +154,16 @@ footer{text-align:center;color:#ccc;font-size:12px;margin-top:36px;line-height:1
     </div>
   </div>
 
-  <!-- 简历自测 -->
-  <div id="p2" style="display:none">
-    <div class="card">
-      <label>本科院校</label>
-      <input type="text" id="bs" placeholder="如：武汉理工大学">
-      <div class="hint">没有本科信息就填最高学历院校</div>
-
-      <label>最高学历院校（选填）</label>
-      <input type="text" id="ms" placeholder="如：复旦大学">
-
-      <label>实习公司（多段用逗号或换行分隔）</label>
-      <textarea id="co" placeholder="字节跳动&#10;某某科技有限公司"></textarea>
-
-      <label>职位名称</label>
-      <input type="text" id="ti" placeholder="如：产品经理实习生">
-
-      <label>工作描述（选填，但很关键）</label>
-      <textarea id="de" placeholder="撰写PRD、竞品分析、需求评审、埋点数据分析…"></textarea>
-      <div class="hint">描述里出现 PRD / 需求分析 / 用户调研 等词能直接命中产品档</div>
-
-      <button class="btn" onclick="check()">开始判定</button>
-      <div class="res" id="res"></div>
-    </div>
-  </div>
-
   <footer>
     数据来源：本人维护的招聘筛选口径<br>
-    仅含标准规则，不含任何候选人信息
+    仅含判断规则，不含任何候选人信息
   </footer>
 </div>
 
 <script>
-var C=null, S=[
- ['BIG','大厂列表','#ff2442','实习经历命中其中任一家 → 大厂档'],
+var C=null;
+var S=[
+ ['BIG','大厂列表','#ff2442','实习经历命中任一家 → 大厂档'],
  ['T1_S','S 档 · 顶尖院校','#c0392b','清北复交浙南科人同'],
  ['T2_A','A 档 · 985','#e67e22','其余 985 院校'],
  ['T3_B','B 档 · 211','#3498db','211 及强双非'],
@@ -135,28 +178,29 @@ fetch('./criteria.json').then(function(r){
   if(!r.ok) throw 0; return r.json();
 }).then(function(d){ C=d; render(); }).catch(function(){
   document.getElementById('secs').innerHTML='<div class="err">'+
-  '<b>没读到 criteria.json</b><br>'+
-  '请在本页同一个文件夹里上传 <code>criteria.json</code>。<br>'+
-  '获取方式：打开你的 Cowork 邀约看板 → <code>⚙️ 筛选标准</code> → <code>📥 导出 JSON</code>'+
-  '</div>';
+  '<b>没读到 criteria.json</b><br>请在本页同一文件夹里上传 <code>criteria.json</code>。<br>'+
+  '获取方式：打开 Cowork 邀约看板 → <code>⚙️ 筛选标准</code> → <code>📥 导出 JSON</code></div>';
 });
 
-function go(n){
-  document.getElementById('p1').style.display = n==1?'':'none';
-  document.getElementById('p2').style.display = n==2?'':'none';
-  document.getElementById('t1').className = n==1?'on':'';
-  document.getElementById('t2').className = n==2?'on':'';
+function go(k){
+  for(var i=1;i<=3;i++){
+    document.getElementById('p'+i).style.display = (i===k?'':'none');
+    document.getElementById('t'+i).className = (i===k?'on':'');
+  }
 }
-
 function esc(s){return String(s).replace(/[&<>"]/g,function(c){
   return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function hit(txt,arr){ if(!txt) return [];
+  var t=String(txt).toLowerCase();
+  return (arr||[]).filter(function(k){ return t.indexOf(String(k).toLowerCase())>-1; }); }
 
+/* ============ 标准总览 ============ */
 function render(){
   if(!C) return;
-  var q=document.getElementById('q').value.trim().toLowerCase();
+  var q=(document.getElementById('q').value||'').trim().toLowerCase();
   var st='',sc='';
   S.forEach(function(s){
-    var k=s[0],name=s[1],col=s[2],desc=s[3];
+    var k=s[0],name=s[1],col=s[2],dsc=s[3];
     var all=C[k]||[];
     var list=q?all.filter(function(x){return x.toLowerCase().indexOf(q)>-1}):all;
     st+='<div class="stat" style="border-left-color:'+col+'" onclick="tog(\''+k+'\')">'+
@@ -167,12 +211,9 @@ function render(){
         '<span class="n">'+(q?list.length+' / ':'')+all.length+'</span></div>'+
         '<span style="color:#ccc;font-size:11px">'+(isOpen?'▲':'▼')+'</span></div>';
     if(isOpen){
-      sc+='<div class="sb"><div class="desc">'+desc+'</div><div class="tags">';
-      if(list.length){
-        list.forEach(function(x){
-          sc+='<span class="tag'+(q?' hit':'')+'">'+esc(x)+'</span>';
-        });
-      } else sc+='<span style="color:#ccc;font-size:13px">无匹配</span>';
+      sc+='<div class="sb"><div class="desc">'+dsc+'</div><div class="tags">';
+      if(list.length){ list.forEach(function(x){ sc+='<span class="tag'+(q?' hit':'')+'">'+esc(x)+'</span>'; }); }
+      else sc+='<span style="color:#ccc;font-size:13px">无匹配</span>';
       sc+='</div></div>';
     }
     sc+='</div>';
@@ -180,73 +221,235 @@ function render(){
   document.getElementById('stats').innerHTML=st;
   document.getElementById('secs').innerHTML=sc;
 }
-
 function tog(k){ open[k]=!open[k]; render(); }
 
-function tier(school){
-  if(!school) return 'X';
-  var s=school.trim();
+/* ============ 档位判定 ============ */
+function tierOf(s){
   if(!s) return 'X';
-  function hit(arr){ return (arr||[]).some(function(x){ return s.indexOf(x)>-1; }); }
-  if(hit(C.T1_S)) return 'S';
-  if(hit(C.T2_A)) return 'A';
-  if(hit(C.T3_B)) return 'B';
-  if(hit(C.OVERSEA_B)) return 'B';
+  if(hit(s,C.T1_S).length) return 'S';
+  if(hit(s,C.T2_A).length) return 'A';
+  if(hit(s,C.T3_B).length) return 'B';
+  if(hit(s,C.OVERSEA_B).length) return 'B';
   return 'X';
 }
+function findSchools(txt){
+  var all=[].concat(C.T1_S,C.T2_A,C.T3_B,C.OVERSEA_B);
+  var f=hit(txt,all);
+  var best='X',bestName='';
+  f.forEach(function(nm){
+    var t=tierOf(nm);
+    var rank={'S':3,'A':2,'B':1,'X':0};
+    if(rank[t]>rank[best]){ best=t; bestName=nm; }
+  });
+  return {tier:best,name:bestName,all:f};
+}
 
-function check(){
-  if(!C){ alert('标准数据还没加载，请先上传 criteria.json'); return; }
+/* ============ 简历解析 ============ */
+function parse(txt){
+  var r={};
+  var sch=findSchools(txt);
+  r.schoolTier=sch.tier; r.schoolName=sch.name; r.schools=sch.all;
+  r.bigs=hit(txt,C.BIG);
+  r.titles=hit(txt,C.PD_TITLE);
+  r.excludes=hit(txt,C.PD_TITLE_EXCLUDE);
+  r.descs=hit(txt,C.PD_DESC);
+  // 毕业时间
+  var gm=txt.match(/20\d{2}\s*[年.\-\/]\s*0?[1-9１-９]?\d?\s*月?\s*(毕业)?/g)||[];
+  var yrs=(txt.match(/20[2-3]\d/g)||[]).map(Number).filter(function(y){return y>=2024&&y<=2032;});
+  r.gradYear = yrs.length? Math.max.apply(null,yrs) : null;
+  // 数字密度
+  r.nums=(txt.match(/\d+(\.\d+)?%|\d{2,}[人个次份万元件条]|\d+(\.\d+)?倍/g)||[]);
+  // 实习段数（粗估：时间区间出现次数）
+  r.periods=(txt.match(/20\d{2}[.\-\/年]\s*\d{1,2}\s*[月]?\s*[-–~至到]\s*(20\d{2}|至今|now)/gi)||[]).length;
+  r.len=txt.replace(/\s/g,'').length;
+  return r;
+}
+
+/* ============ 核心判定 ============ */
+function judge(r){
+  var okSchool = r.schoolTier!=='X';
+  var hasBig = r.bigs.length>0;
+  var titleHit = r.titles.length>0;
+  var excludeHit = r.excludes.length>0;
+  var descHit = r.descs.length>0;
+  var prod = (titleHit && !excludeHit) || descHit;
+  var pass = okSchool && (hasBig || prod);
+
+  var stage='', lvl='fail', title='';
+  if(!okSchool){
+    stage='第 1 步 · 院校筛选'; lvl='fail'; title='大概率过不了初筛';
+  }else if(!hasBig && !prod){
+    stage='第 2 步 · 经历相关性判断'; lvl='fail'; title='大概率过不了初筛';
+  }else if(excludeHit && !descHit){
+    stage='第 2 步 · 可能被误判为设计岗'; lvl='mid'; title='存在被误判风险';
+  }else if(pass && !hasBig && r.descs.length<3){
+    stage='能进人工复筛，但信号偏弱'; lvl='mid'; title='通过，但不稳';
+  }else{
+    stage='可进入人工复筛'; lvl='pass'; title='通过初筛';
+  }
+  return {pass:pass,lvl:lvl,title:title,stage:stage,
+          okSchool:okSchool,hasBig:hasBig,titleHit:titleHit,
+          excludeHit:excludeHit,descHit:descHit,prod:prod};
+}
+
+/* ============ 改进建议 ============ */
+function advise(r,j){
+  var out=[];
+  if(!j.okSchool){
+    out.push({t:'院校不在常规档位内',
+      d:'这一项改不了，但可以用<b>经历密度和量化成果</b>把它盖过去。把最强的一段实习提到最前面，并确保每段都有具体数字。',
+      ex:null});
+  }
+  if(!j.hasBig && !j.descHit){
+    var need=(C.PD_DESC||[]).slice(0,10).join('、');
+    out.push({t:'简历里没有出现任何产品动作关键词',
+      d:'这是最致命的一项。筛选系统看的不是「你在哪工作」，而是「你做过什么动作」。建议在描述里补上你实际做过的事，例如：<b>'+esc(need)+'</b>',
+      ex:'<i>负责用户运营相关工作</i><br><em>撰写PRD推动2个功能上线，通过埋点分析定位转化断点，完成竞品分析报告3份</em>'});
+  }else if(r.descs.length>0 && r.descs.length<3){
+    out.push({t:'产品信号偏弱（仅命中 '+r.descs.length+' 个）',
+      d:'命中数太少容易被判为「沾边但不对口」。建议再补 2-3 个动作词，覆盖<b>需求 → 设计 → 上线 → 复盘</b>完整链路。',
+      ex:null});
+  }
+  if(j.excludeHit && !j.descHit){
+    out.push({t:'命中设计岗关键词：'+esc(r.excludes.join('、')),
+      d:'系统可能把你判成设计背景而非产品。如果你确实做的是产品，<b>在描述中强调产品动作</b>（PRD、需求评审、数据分析），而不是视觉产出。',
+      ex:'<i>负责产品设计与视觉优化</i><br><em>负责功能方案设计，撰写需求文档并推动评审落地</em>'});
+  }
+  if(r.nums.length<3){
+    out.push({t:'量化描述太少（全文仅 '+r.nums.length+' 处数字）',
+      d:'每段经历<b>至少要有 1-2 个数字</b>。没有数字的描述在筛选时基本等于没写。',
+      ex:'<i>参与活动策划与执行</i><br><em>独立策划 3 场活动，累计参与 200+ 人，报名转化率提升 25%</em>'});
+  }
+  if(r.periods<2){
+    out.push({t:'识别到的经历段数偏少',
+      d:'可能是<b>时间格式没写规范</b>导致识别不到（建议统一写成 2024.06-2024.09）。如果确实只有一段，建议把课程项目、竞赛、社团经历也结构化写进来。',
+      ex:null});
+  }
+  if(r.gradYear && r.gradYear<=2026){
+    out.push({t:'毕业时间为 '+r.gradYear+' 年',
+      d:'投<b>实习岗</b>时这会是减分项（实习窗口短），投<b>校招正职</b>则没问题。注意区分投递类型。',
+      ex:null});
+  }
+  if(out.length===0){
+    out.push({t:'没有发现明显问题',
+      d:'各项信号都命中了。接下来能拉开差距的是<b>成果的具体程度</b>——同样写「提升转化率」，写清楚从多少到多少、你做了什么导致的，会明显更强。',
+      ex:null});
+  }
+  return out;
+}
+
+/* ============ 关键词覆盖 ============ */
+function coverage(r){
+  var all=C.PD_DESC||[];
+  var got=r.descs.map(function(x){return x.toLowerCase()});
+  var miss=all.filter(function(x){ return got.indexOf(x.toLowerCase())<0; });
+  return {got:r.descs,miss:miss.slice(0,14),rate:all.length?Math.round(r.descs.length/all.length*100):0};
+}
+
+/* ============ 渲染结果 ============ */
+function scan(){
+  if(!C){ alert('标准数据还没加载完，稍等一下再试'); return; }
+  var txt=document.getElementById('resume').value||'';
+  if(txt.replace(/\s/g,'').length<30){ alert('内容太短了，把简历完整粘贴进来试试'); return; }
+  var r=parse(txt), j=judge(r), sug=advise(r,j), cov=coverage(r);
+
+  var h='<div class="verdict '+j.lvl+'"><h2>'+
+    (j.lvl==='pass'?'✅ ':j.lvl==='mid'?'⚠️ ':'❌ ')+j.title+'</h2>'+
+    '<p>基于 '+(Object.keys(C).filter(function(k){return Array.isArray(C[k])}).reduce(function(a,k){return a+C[k].length},0))+' 条真实初筛规则判定</p>'+
+    '<div class="stage">预计卡点：<b>'+esc(j.stage)+'</b></div></div>';
+
+  // 四维诊断
+  h+='<div class="blk"><h3>🔍 逐项诊断</h3>';
+  h+=dim('院校', j.okSchool
+      ? '<span class="mark y">✓</span>'+esc(r.schoolName||'')+' → <b>'+r.schoolTier+' 档</b>，达标'
+      : '<span class="mark n">✗</span>未识别到档位内院校'+(r.schools.length?'（识别到：'+esc(r.schools.join('、'))+'）':''));
+  h+=dim('大厂经历', j.hasBig
+      ? '<span class="mark y">✓</span>命中 '+esc(r.bigs.join('、'))
+      : '<span class="mark w">—</span>未命中大厂列表');
+  h+=dim('职位信号', j.titleHit
+      ? '<span class="mark y">✓</span>命中「'+esc(r.titles.join('、'))+'」'
+      : '<span class="mark w">—</span>职位名未命中产品关键词');
+  h+=dim('描述信号', j.descHit
+      ? '<span class="mark y">✓</span>命中 '+r.descs.length+' 个：'+esc(r.descs.slice(0,8).join('、'))
+      : '<span class="mark n">✗</span>未命中任何产品动作词');
+  h+=dim('排除风险', j.excludeHit
+      ? '<span class="mark n">✗</span>命中设计岗词「'+esc(r.excludes.join('、'))+'」'
+      : '<span class="mark y">✓</span>无');
+  h+=dim('量化程度', '<span class="mark '+(r.nums.length>=3?'y':'w')+'">'+(r.nums.length>=3?'✓':'—')+
+      '</span>全文 '+r.nums.length+' 处数字'+(r.nums.length?'（'+esc(r.nums.slice(0,6).join('、'))+'）':''));
+  h+='</div>';
+
+  // 关键词覆盖
+  h+='<div class="blk"><h3>🎯 产品动作词覆盖度　<span style="font-size:12px;color:#999;font-weight:400">'
+     +cov.got.length+' / '+(C.PD_DESC||[]).length+'</span></h3><div class="tags">';
+  cov.got.forEach(function(x){ h+='<span class="tag ok">✓ '+esc(x)+'</span>'; });
+  cov.miss.forEach(function(x){ h+='<span class="tag miss">'+esc(x)+'</span>'; });
+  h+='</div><div class="hint" style="margin-top:10px">绿色=已命中，黄色=可考虑补充（只补你真的做过的）</div></div>';
+
+  // 建议
+  h+='<div class="blk"><h3>🛠 具体改进建议</h3>';
+  sug.forEach(function(s){
+    h+='<div class="sug"><b>'+esc(s.t)+'</b><br>'+s.d+(s.ex?'<span class="ex">'+s.ex+'</span>':'')+'</div>';
+  });
+  // 改后预测
+  if(j.lvl!=='pass'){
+    h+='<div class="predict">💡 如果补齐上述关键词与量化描述，判定将变为：<b>✅ 通过初筛</b>'+
+       (j.okSchool?'':'（院校项无法改变，但经历密度足够时人工复筛仍有机会）')+'</div>';
+  }
+  h+='</div>';
+
+  var el=document.getElementById('res');
+  el.innerHTML=h; el.style.display='block';
+  el.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function dim(k,v){ return '<div class="dim"><span class="k">'+k+'</span><span class="v">'+v+'</span></div>'; }
+
+/* ============ 快速查档 ============ */
+function quick(){
+  if(!C){ alert('标准数据还没加载完'); return; }
   var bs=document.getElementById('bs').value.trim();
   var ms=document.getElementById('ms').value.trim();
   var co=document.getElementById('co').value;
-  var ti=document.getElementById('ti').value.trim().toLowerCase();
+  var ti=document.getElementById('ti').value.trim();
   var de=document.getElementById('de').value;
+  var bt=tierOf(bs), mt=tierOf(ms);
+  var use=bs?bt:mt, okS=use!=='X';
+  var bigs=hit(co,C.BIG), tH=hit(ti,C.PD_TITLE), xH=hit(ti,C.PD_TITLE_EXCLUDE), dH=hit(de,C.PD_DESC);
+  var prod=(tH.length&&!xH.length)||dH.length>0;
+  var pass=okS&&(bigs.length>0||prod);
 
-  var bt=tier(bs), mt=tier(ms);
-  var useT = bs ? bt : mt;
-  var okSchool = useT !== 'X';
+  var h='<div class="verdict '+(pass?'pass':'fail')+'"><h2>'+(pass?'✅ 通过初筛':'❌ 未通过')+'</h2></div>';
+  h+='<div class="blk">';
+  h+=dim('学校档位',(bs?esc(bs)+' → '+bt+' 档':'（未填本科）')+(ms?'；'+esc(ms)+' → '+mt+' 档':'')+
+     ' <span class="mark '+(okS?'y':'n')+'">'+(okS?'✓ 达标':'✗ 不在档内')+'</span>');
+  h+=dim('大厂经历',bigs.length?'<span class="mark y">✓</span>'+esc(bigs.join('、')):'<span class="mark w">—</span>未命中');
+  h+=dim('产品信号', tH.length&&!xH.length ? '<span class="mark y">✓</span>职位名命中「'+esc(tH.join('、'))+'」'
+      : dH.length ? '<span class="mark y">✓</span>描述命中「'+esc(dH.slice(0,6).join('、'))+'」'
+      : xH.length ? '<span class="mark n">✗</span>命中排除词「'+esc(xH.join('、'))+'」（设计岗）'
+      : '<span class="mark n">✗</span>未命中');
+  h+=dim('判定路径', pass?(bigs.length?'学校达标 + 大厂档':'学校达标 + 产品档')
+      :(!okS?'学校不在档内，直接淘汰':'学校达标，但大厂与产品信号均未命中'));
+  h+='</div>';
+  var el=document.getElementById('res2');
+  el.innerHTML=h; el.style.display='block';
+}
 
-  var cos=co.split(/[,，\n]/).map(function(x){return x.trim()}).filter(Boolean);
-  var bigHit=[];
-  cos.forEach(function(c){
-    (C.BIG||[]).forEach(function(b){
-      if(c.toLowerCase().indexOf(b.toLowerCase())>-1 && bigHit.indexOf(b)<0) bigHit.push(b);
-    });
-  });
-
-  var tHit=(C.PD_TITLE||[]).filter(function(k){return ti.indexOf(k.toLowerCase())>-1});
-  var xHit=(C.PD_TITLE_EXCLUDE||[]).filter(function(k){return ti.indexOf(k.toLowerCase())>-1});
-  var dHit=(C.PD_DESC||[]).filter(function(k){return de.indexOf(k)>-1});
-  var prod=(tHit.length&&!xHit.length)||dHit.length>0;
-
-  var pass = okSchool && (bigHit.length>0 || prod);
-
-  var h='<h3>'+(pass?'✅ 通过初筛':'❌ 未通过')+'</h3><ul>';
-  h+='<li><b>学校档位</b><span>'+
-     (bs?esc(bs)+' → '+bt+' 档':'（未填本科）')+
-     (ms?'；'+esc(ms)+' → '+mt+' 档':'')+
-     ' <span style="color:'+(okSchool?'#0a8043':'#c5221f')+'">'+
-     (okSchool?'✓ 达标':'✗ 不在 S/A/B 档')+'</span></span></li>';
-  h+='<li><b>大厂经历</b><span>'+(bigHit.length?
-     '<span style="color:#0a8043">✓ 命中 '+bigHit.map(esc).join('、')+'</span>':
-     '<span style="color:#999">未命中</span>')+'</span></li>';
-  h+='<li><b>产品信号</b><span>';
-  if(tHit.length&&!xHit.length) h+='<span style="color:#0a8043">✓ 职位名命中「'+tHit.map(esc).join('、')+'」</span>';
-  else if(dHit.length) h+='<span style="color:#0a8043">✓ 描述命中「'+dHit.slice(0,5).map(esc).join('、')+'」</span>';
-  else if(xHit.length) h+='<span style="color:#c5221f">✗ 命中排除词「'+xHit.map(esc).join('、')+'」（设计岗）</span>';
-  else h+='<span style="color:#999">未命中</span>';
-  h+='</span></li>';
-  h+='<li><b>判定路径</b><span>'+(pass?
-     (bigHit.length?'学校达标 + 大厂档':'学校达标 + 产品档'):
-     (!okSchool?'学校不在档内，直接淘汰':'学校达标，但大厂与产品信号均未命中'))+'</span></li>';
-  h+='</ul>';
-
-  var r=document.getElementById('res');
-  r.className='res '+(pass?'pass':'fail');
-  r.innerHTML=h;
-  r.style.display='block';
+/* ============ 示例 ============ */
+function demo(){
+  document.getElementById('resume').value=
+"李明　1999.10　186xxxx8888　liming@example.com\n"+
+"武汉理工大学　工商管理　本科　2021.09-2025.06\n\n"+
+"实习经历\n"+
+"字节跳动｜产品运营实习生｜2024.06-2024.09\n"+
+"负责抖音电商商家侧运营，参与需求评审并撰写PRD推动3个功能上线；\n"+
+"通过埋点分析定位商家开店流程转化断点，将完成率从 42% 提升至 61%；\n"+
+"完成竞品分析报告 2 份，输出用户调研访谈 15 场。\n\n"+
+"某某科技｜运营实习生｜2023.07-2023.10\n"+
+"负责社群运营，维护 5 个社群共 1200+ 用户，月活提升 30%。\n\n"+
+"技能：Excel（数据透视表）、SQL 基础、CET-6";
+  scan();
 }
 </script>
 </body>
 </html>
+```
